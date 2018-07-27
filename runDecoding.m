@@ -7,7 +7,7 @@ end
 
 path(path, 'glmnet_matlab/')
 
-for d = 7:length(l.datasets)
+for d = 1:length(l.datasets)
     fprintf(['Dataset #' num2str(d) '\n'])
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,7 @@ for d = 7:length(l.datasets)
     decoding_psych(d,1:12,1:3) = reshape(a, [12 3]);
     fprintf('\n')
 
-    % COMMON DECODER FOR SIGN(ILD) - weights
+    % Weights
 
     myoptions = [];
     myoptions.alpha = 0.5;
@@ -66,6 +66,8 @@ for d = 7:length(l.datasets)
             fprintf('*')
         end
         fprintf('\n')
+    else
+        decoding_psych_intime(d, 1:12, 1:3, 1:15) = nan;
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

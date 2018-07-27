@@ -9,7 +9,7 @@ myfun = @(w,x) (w(1)-w(2))./(1+exp(-w(3)*(x-w(4)))) + w(2);
 w0 = [1 0 1 0];
 ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20]';
 
-load decodingResults/decoding_results_psych_intime.mat
+load decoding_results.mat
 decoding_psych_intime(:,1:6,:,:) = 1 - decoding_psych_intime(:,1:6,:,:);
 decoding_psych_intime = squeeze(mean(decoding_psych_intime(l.coefVar<0.6, :,:,:)));
 
