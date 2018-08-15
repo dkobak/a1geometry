@@ -15,7 +15,7 @@ for d = 1:length(l.datasets)
     fprintf('linear decoding of contra: ')
     for abl = 1:3
         X = squeeze(sum(l.datasets{d}(:, 1:6, abl, l.time>0 & l.time<.15, :), 4));
-        y = bsxfun(@times, ones(size(X)), [20 10 6 4.5 3 1.5]);
+        y = bsxfun(@times, ones([1 6 size(X,3)]), [20 10 6 4.5 3 1.5]);
         [X,y] = cleanup(X,y);
         decoding_abl_contra_linear(d,abl) = nestedcv(X,y,[],'linear');
         fprintf('*')
@@ -27,7 +27,7 @@ for d = 1:length(l.datasets)
     fprintf('linear decoding of ipsi: ')
     for abl = 1:3
         X = squeeze(sum(l.datasets{d}(:, 7:12, abl, l.time>0 & l.time<.15, :), 4));
-        y = bsxfun(@times, ones(size(X)), [1.5 3 4.5 6 10 20]);
+        y = bsxfun(@times, ones([1 6 size(X,3)]), [1.5 3 4.5 6 10 20]);
         [X,y] = cleanup(X,y);
         decoding_abl_ipsi_linear(d,abl) = nestedcv(X,y,[],'linear');
         fprintf('*')
