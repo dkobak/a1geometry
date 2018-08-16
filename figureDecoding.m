@@ -62,7 +62,7 @@ for abl=1:3
             plot([0 2.2], [0 0 0 1 k-1 abl; 2.2 2.2*abl*20 2.2*(k-1) 1 k-1 abl] * beta, ...
                  style{k}, 'Color', color, 'LineWidth', 1 + abl/2);
             text(-0.2, 1.2, letters(sub), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
-        end
+         end
     end
 end
 
@@ -84,6 +84,9 @@ for abl=1:3
         %end
         xlabel('CV')
         ylabel('R2')
+        
+%         bb = regress(accuracy(:,abl,k), [l.coefVar(:) l.coefVar(:)*0+1]);            
+%         plot([0 2.2], [0 1; 2.2 1] * bb, style{k}, 'Color', 'r')        
      end
 end
 
@@ -150,9 +153,6 @@ warning('error', 'MATLAB:rankDeficientMatrix');
 warnings = [0 0 0 0];
 for analysisType = 1:4
     for d = 1:length(l.datasets)
-%         if d==6 || d==7
-%             continue
-%         end
         for a = 1:3
             D = decodings(d,:,a,analysisType);
             try
@@ -178,8 +178,8 @@ for analysisType = 1:4
     integralCIs(:, :, analysisType) = ci;
 end
 
-display(integralBetas)
-display(integralCIs)
+% display(integralBetas)
+% display(integralCIs)
 display(warnings)
 
 display(['Inact means: ' num2str(mean(integralPerformances(inds{2},:,1)))])
