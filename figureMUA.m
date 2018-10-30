@@ -66,6 +66,7 @@ end
 
 ds = {find(l.coefVar>1.2), find(l.coefVar<0.6)};
 
+modes = {'INACT', 'ACT'};
 for kk=1:2    
     muas = [];
     muas_smooth = [];
@@ -144,6 +145,12 @@ for kk=1:2
             plot(x(i), mua(i,j), 'o', 'MarkerSize', 5+j*2, 'MarkerFaceColor', col(i,:), 'MarkerEdgeColor', 'w')
             plot(x(i), muaOnset(i,j), '.', 'Color', col(i,:)*.6+[1 1 1]*.4, 'MarkerSize', 8)
         end
+        
+        ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20]';
+        [beta, bint] = regress(mua(:,j)-mean(mua(:,j)), ild);
+        display([modes{kk} ': ABL = ' num2str(j*20) ', slope = ' num2str(beta)]);
+        [beta, bint] = regress(muaOnset(:,j)-mean(muaOnset(:,j)), ild);
+        display([modes{kk} ': ABL = ' num2str(j*20) ', onset slope = ' num2str(beta)]);
     end
     set(gca,'XTick',[])
     ylim([0 5])

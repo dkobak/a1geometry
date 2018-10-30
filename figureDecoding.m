@@ -83,7 +83,7 @@ for abl=1:3
         %    title(['IPSI LINEAR, ABL=' num2str(abl*20)])
         %end
         xlabel('CV')
-        ylabel('R2')
+        ylabel('R^2')
         
 %         bb = regress(accuracy(:,abl,k), [l.coefVar(:) l.coefVar(:)*0+1]);            
 %         plot([0 2.2], [0 1; 2.2 1] * bb, style{k}, 'Color', 'r')        
@@ -129,7 +129,9 @@ for m = 1:2
         y = myfun(w,x);
         plot(x,y, 'k', 'LineWidth', 1+i/2)
         
-        text(10, 0.5+0.05*i, ['JND = ' num2str(jnd(w),2)])
+        plot([2,5], [0+0.15*i, 0+0.15*i], 'k', 'LineWidth', 1+i/2)
+        text(6, 0+0.15*i, ['ABL = ' num2str(i*20) ' dB'])
+        text(6, 0+0.15*i-0.05, ['JND = ' num2str(jnd(w),2) ' dB'])
     end
 end
 
