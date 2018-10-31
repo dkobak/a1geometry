@@ -84,13 +84,15 @@ for i = 1:length(l.datasets)
     if ~isempty(beta)
         imbalanceILD(i) = sum(beta(:,1)<0)/sum(~isnan(beta(:,1)));
         imbalanceABL(i) = sum(beta(:,2)>0)/sum(~isnan(beta(:,1)));
+        posGain(i) = nanmean(beta(:,1).*beta(:,2)<0);
     else
         imbalanceILD(i) = nan;
         imbalanceABL(i) = nan;
+        posGain(i) = nan;
     end
 end
 
-subplot(244)
+subplot(3,4,4)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'G', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 y = imbalanceILD;
@@ -100,7 +102,7 @@ xlabel('CV')
 text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
 ylabel('Fraction of contra neurons')
 
-subplot(248)
+subplot(3,4,8)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'H', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 y = imbalanceABL;
@@ -109,6 +111,17 @@ xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
 text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
 ylabel('Fraction of loud neurons')
+
+subplot(3,4,12)
+set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
+text(-0.2, 1.2, 'I', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+y = posGain;
+myscatter(l,y)
+xlabel('CV')
+[r,p] = corr(l.coefVar(:), y(:));
+text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
+ylabel('Fraction of positive gain')
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
