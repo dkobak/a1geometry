@@ -33,7 +33,7 @@ set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'E', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colAct)
 title('Active sessions')
-text(-0.06, -0.045, ['R^2 = ' num2str(nanmean(r2),2) ' \pm ' num2str(nanstd(r2),2)])
+text(-0.06, -0.045, ['R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2)])
 text(-0.06, -0.055, ['n = ' num2str(size(beta,1))])
 
 subplot(247)
@@ -66,7 +66,7 @@ set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'B', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colInact)
 title('Inactive sessions')
-text(-0.06, -0.045, ['R^2 = ' num2str(nanmean(r2),2) ' \pm ' num2str(nanstd(r2),2)])
+text(-0.06, -0.045, ['R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2)])
 text(-0.06, -0.055, ['n = ' num2str(size(beta,1))])
 
 subplot(243)
@@ -192,10 +192,10 @@ print(h,'figures/figureSingleNeurons.pdf','-dpdf','-r0')
                 ind = ~isnan(fr(:));
                 ildAll = bsxfun(@times, ild', ones([1 3 size(X,4)]));
                 ablAll = bsxfun(@times, abl,  ones([12 1 size(X,4)]));
-                b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)], 0.01);
+%                 b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)], 0.01);
 
                 % UNCOMMENT THE LINE BELOW TO INCLUDE THE MULTIPLICATIVE TERM
-                % b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1) ildAll(ind).*ablAll(ind)]);
+                b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1) ildAll(ind).*ablAll(ind)]);
 
                 beta = [beta; b(1:2)'];                
                 
@@ -206,8 +206,8 @@ print(h,'figures/figureSingleNeurons.pdf','-dpdf','-r0')
                 y = y(:);
                 x1 = x1(:);
                 x2 = x2(:);
-                yhat = x1*b(1) + x2*b(2) + b(3);
-                % yhat = x1*b(1) + x2*b(2) + b(3) + b(4)*x1.*x2;
+                % yhat = x1*b(1) + x2*b(2) + b(3);
+                yhat = x1*b(1) + x2*b(2) + b(3) + b(4)*x1.*x2;
                 r2 = [r2; 1-sum((y-yhat).^2)/sum((y-mean(y)).^2)];  
             end
         end
@@ -219,8 +219,8 @@ print(h,'figures/figureSingleNeurons.pdf','-dpdf','-r0')
         hold on
         plot([0 0],ylim, 'k')
         plot(xlim,[0 0], 'k')
-        xlabel('ILD')
-        ylabel('ABL')
+        xlabel('ILD coefficient')
+        ylabel('ABL coefficient')
         if nargin==1
             col = [0 0 0];
         end

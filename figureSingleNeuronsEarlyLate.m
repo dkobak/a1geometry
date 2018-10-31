@@ -5,7 +5,7 @@ if nargin==0
     l = load('evokedResponses_150to150.mat');
 end
 
-figure('Position', [100 100 1500 800])
+figure('Position', [100 100 1200 700])
 
 colAct = [27,158,119]/256;
 colInact = [217,95,2]/256;
@@ -14,33 +14,33 @@ datasetInd = find(l.coefVar > 1.2);
 beta = getBetas(datasetInd, l.time>0 & l.time<0.15);
 subplot(231)
 scatterBetas(beta, colInact)
-title('Inactive sessions. 0--150 ms')
+title('Inactive sessions. 0–150 ms')
 
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05);
 subplot(232)
 scatterBetas(beta, colInact)
-title('Inactive sessions. 0--50 ms')
+title('Inactive sessions. 0–50 ms')
 
 beta = getBetas(datasetInd, l.time>0.1 & l.time<0.15);
 subplot(233)
 scatterBetas(beta, colInact)
-title('Inactive sessions. 100--150 ms')
+title('Inactive sessions. 100–150 ms')
 
 datasetInd = find(l.coefVar < .6);
 beta = getBetas(datasetInd, l.time>0 & l.time<0.15);
 subplot(234)
 scatterBetas(beta, colAct)
-title('Active sessions. 0--150 ms')
+title('Active sessions. 0–150 ms')
 
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05);
 subplot(235)
 scatterBetas(beta, colAct)
-title('Active sessions. 0--50 ms')
+title('Active sessions. 0–50 ms')
 
 beta = getBetas(datasetInd, l.time>0.1 & l.time<0.15);
 subplot(236)
 scatterBetas(beta, colAct)
-title('Active sessions. 100--150 ms')
+title('Active sessions. 100–150 ms')
 
 letters = 'ABCDEF';
 for i = 1:6
@@ -63,20 +63,21 @@ print(h,'figures/figureSingleNeuronsEarlyLate.pdf','-dpdf','-r0')
         abl = [20 40 60] - 40;
 
         for d = 1:length(datasetInd)
-            X  = squeeze(sum(l.datasets{datasetInd(d)}(:,:,:,timeinterval,:),4) / 0.15);
+            X  = squeeze(mean(l.datasets{datasetInd(d)}(:,:,:,timeinterval,:),4) / 0.01);
             for n = 1:size(X,1)
                 fr = X(n,:,:,:); 
                 ind = ~isnan(fr(:));
                 ildAll = bsxfun(@times, ild', ones([1 3 size(X,4)]));
                 ablAll = bsxfun(@times, abl,  ones([12 1 size(X,4)]));
                 b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)], 0.01);
+                % b = regress(fr(ind), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)], 0.01);
                 beta = [beta; b(1:2)'];                
             end
         end
     end
 
     function scatterBetas(beta, col)
-        axis([-1 1 -1 1]*0.065)
+        axis([-1 1 -1 1]*0.05)
         axis square
         hold on
         plot([0 0],ylim, 'k')

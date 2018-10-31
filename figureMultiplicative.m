@@ -6,8 +6,10 @@ if nargin==0
 end
 
 sessions = {find(l.coefVar>1.2), find(l.coefVar<.6)};
+col = {[217,95,2]/256, [27,158,119]/256};
+titles = {'Inactive state', 'Active state'};
 
-figure('Position', [100 100 1200 225])
+figure('Position', [100 100 1200 700])
 
 % INACT or ACT
 for mode = 1:2       
@@ -30,48 +32,50 @@ for mode = 1:2
         end
     end
     
-    if mode == 1
-        subplot(141)
-        [n,edges] = histcounts(betas(:,1),50);
-        stairs(edges(1:end-1), n, 'Color', [217,95,2]/256)
-        box off
-        title('Inactive sessions')
-        xlabel('ILD coefficient')
-        xlim([-.05 .05])
-        ylim([0 160])
-        subplot(142)
-        [n,edges] = histcounts(betas(:,2),50);
-        stairs(edges(1:end-1), n, 'Color', [217,95,2]/256)
-        box off        
-        title('Inactive sessions')
-        xlabel('ABL coefficient')
-        xlim([-.05 .05])
-        ylim([0 160])
-        subplot(143)
-        [n,edges] = histcounts(betas(:,3),50);
-        stairs(edges(1:end-1)*1000, n, 'Color', [217,95,2]/256)
-        box off
-        title('Inactive sessions')
-        xlabel('ILD*ABL coefficient \times{}10^3')
-        xlim([-2 2])
-        ylim([0 160])
+    subplot(2,3,(mode-1)*3+1)
+    axis([-1 1 -1 1]*0.065)
+    axis square
+    hold on
+    plot([0 0],ylim, 'k')
+    plot(xlim,[0 0], 'k')
+    xlabel('ILD coefficient')
+    ylabel('ABL coefficient')
+    scatter(betas(:,1), betas(:,2), 2, col{mode}, 'MarkerFaceColor', col{mode});
+    set(gca, 'XTick', [-0.05 0 0.05], 'YTick', [-0.05 0 0.05])
+    title(titles{mode})
+        
+    subplot(2,3,(mode-1)*3+2)
+    axis([-1 1 -.05 .05]*0.065)
+    axis square
+    hold on
+    plot([0 0],ylim, 'k')
+    plot(xlim,[0 0], 'k')
+    xlabel('ILD coefficient')
+    ylabel('ILD{\cdot}ABL coefficient')
+    scatter(betas(:,1), betas(:,3), 2, col{mode}, 'MarkerFaceColor', col{mode});
+    set(gca, 'XTick', [-0.05 0 0.05], 'YTick', [-0.003 0 0.003], 'YTickLabels', [-0.003 0 0.003])
+    title(titles{mode})
+    if mode==2
+        [r,p] = corr(betas(:,1), betas(:,3));
+        display(['Correlation ' num2str(r,2) ', p=' num2str(p,3)])
     end
     
-    if mode == 2
-        subplot(144)
-        scatter(betas(:,1), betas(:,3)*1000, 10, [27,158,119]/256, 'MarkerFaceColor', [27,158,119]/256)
-        title('Active sessions')
-        xlabel('ILD coefficient')
-        ylabel('ILD*ABL coefficient \times{}10^3')
-        xlim([-.05 .05])
-        ylim([-2 2])
-        [rho,p] = corr(betas(:,1), betas(:,3));
-    end
+    subplot(2,3,(mode-1)*3+3)
+    axis([-1 1 -.05 .05]*0.065)
+    axis square
+    hold on
+    plot([0 0],ylim, 'k')
+    plot(xlim,[0 0], 'k')
+    xlabel('ABL coefficient')
+    ylabel('ILD{\cdot}ABL coefficient')
+    scatter(betas(:,2), betas(:,3), 2, col{mode}, 'MarkerFaceColor', col{mode});
+    set(gca, 'XTick', [-0.05 0 0.05], 'YTick', [-0.003 0 0.003], 'YTickLabels', [-0.003 0 0.003])
+    title(titles{mode})
 end
 
-letters = 'ABCD';
-for i = 1:4
-    subplot(1,4,i)
+letters = 'ABCDEF';
+for i = 1:6
+    subplot(2,3,i)
     text(-0.2, 1.14, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 end
 
