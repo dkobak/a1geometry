@@ -32,6 +32,7 @@ subplot(234)
 scatterBetas(beta, colAct)
 title('Active sessions. 0–150 ms')
 
+% beta = getBetas(datasetInd, l.time>0.02 & l.time<0.04);
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05);
 subplot(235)
 scatterBetas(beta, colAct)
@@ -62,18 +63,26 @@ print(h,'figures/figureSingleNeuronsEarlyLate.pdf','-dpdf','-r0')
         ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20];
         abl = [20 40 60] - 40;
 
+%         XX = [];
         for d = 1:length(datasetInd)
-            X  = squeeze(mean(l.datasets{datasetInd(d)}(:,:,:,timeinterval,:),4) / 0.01);
+            X = squeeze(mean(l.datasets{datasetInd(d)}(:,:,:,timeinterval,:),4) / 0.01);
+%             XX = cat(1,XX,nanmean(X,4)); 
             for n = 1:size(X,1)
                 fr = X(n,:,:,:); 
                 ind = ~isnan(fr(:));
                 ildAll = bsxfun(@times, ild', ones([1 3 size(X,4)]));
                 ablAll = bsxfun(@times, abl,  ones([12 1 size(X,4)]));
-                b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)], 0.01);
-                % b = regress(fr(ind), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)], 0.01);
+                b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
                 beta = [beta; b(1:2)'];                
             end
         end
+        
+%         fr = mean(XX,1);
+%         ind = ~isnan(fr(:));
+%         ildAll = bsxfun(@times, ild', ones([1 3 size(X,4)]));
+%         ablAll = bsxfun(@times, abl,  ones([12 1 size(X,4)]));
+%         b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
+%         beta = b(1:2)';    
     end
 
     function scatterBetas(beta, col)

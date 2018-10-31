@@ -94,33 +94,35 @@ end
 
 subplot(3,4,4)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
-text(-0.2, 1.2, 'G', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+text(-0.5, 1.2, 'G', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 y = imbalanceILD;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
 text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
-ylabel('Fraction of contra neurons')
+ylabel({'Fraction of neurons','with contralateral preference'})
 
 subplot(3,4,8)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
-text(-0.2, 1.2, 'H', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+text(-0.5, 1.2, 'H', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 y = imbalanceABL;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
 text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
-ylabel('Fraction of loud neurons')
+ylabel({'Fraction of neurons','with loud preference'})
 
 subplot(3,4,12)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
-text(-0.2, 1.2, 'I', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+text(-0.5, 1.2, 'I', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 y = posGain;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
 text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
-ylabel('Fraction of positive gain')
+ylabel({'Fraction of neurons','with positive gain'})
+set(gca, 'YTick', [0 0.5 1])
+
 
 
 
