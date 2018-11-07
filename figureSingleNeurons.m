@@ -5,6 +5,7 @@ if nargin==0
     l = load('evokedResponses_150to150.mat');
 end
 
+load('decoding_results.mat', 'decoderWeights')
 
 figure('Position', [100 100 1500 800])
 
@@ -90,7 +91,15 @@ for i = 1:length(l.datasets)
         imbalanceABL(i) = nan;
         posGain(i) = nan;
     end
+    
+    corrDecoderIld(i) = corr(beta(:,1), decoderWeights{i});
+    nonzero = decoderWeights{i}~=0;
+    sameSignDecoderIld(i) = mean(beta(nonzero,1).*decoderWeights{i}(nonzero) > 0);
 end
+fprintf(['Fraction of nonzero ILD decoder weights that have the same sign as beta_ild: ', ...
+    num2str(mean(sameSignDecoderIld),2) ' +- ' num2str(std(sameSignDecoderIld),2) '\n'])
+fprintf(['Correlations between ILD decoder weights and beta_ild: ', ...
+    num2str(mean(corrDecoderIld),2) ' +- ' num2str(std(corrDecoderIld),2) '\n'])
 
 subplot(3,4,4)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
