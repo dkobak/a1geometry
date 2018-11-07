@@ -1,4 +1,4 @@
-function makeMovies(l)
+function makeMovie(l)
 
 % Load the data if not provided
 if nargin==0
@@ -9,17 +9,28 @@ begtime = 0.00;
 endtime = 0.15;
 
 example_ind = [1 7];
+labels = {'Inactive session', 'Active session'};
 col = parula12();
-filenames = {'movie_inactive.avi', 'movie_active.avi'};
 
-for ii = 1
-    f = figure('Position', [0 0 800 800]); 
-    set(gca,'Color','k')    
-    axis(110*[-1 1 -1 1 -1 1])
-    set(gcf,'Renderer','zbuffer') 
-    axis normal
-    hold on
-    axis vis3d
+figure('Position', [0 0 1000 1000]); 
+set(gcf,'Color','k')    
+axes('Units', 'normalized', 'Position', [0 0 1 1])
+set(gca,'Color','k')    
+axis(70*[-1 1 -1 1 -1 1])
+set(gcf,'Renderer','zbuffer') 
+hold on
+axis vis3d
+axis off
+
+ann = annotation('textbox',[0.45 0.6 0.1 0.1], 'string', ' ', 'Color', 'w', ...
+                 'HorizontalAlignment', 'center');
+annotation('ellipse', [.495 .495 .01 .01], 'FaceColor', [.5 .5 .5], 'Color', 'w')
+             
+vidObj = VideoWriter('geometry.avi');
+open(vidObj);
+
+for ii = 1:2
+    cla
     
     d = example_ind(ii);    
     X = squeeze(sum(l.datasets{d}(:,:,:,l.time>begtime & l.time<endtime ,:),4) / (endtime-begtime));
@@ -31,7 +42,7 @@ for ii = 1
     [~,~,Vabl] = svd(Xabl - mean(Xabl), 'econ');
     Xild = squeeze(nanmean(Xpsth,3))';
     [~,~,Vild] = svd(Xild - mean(Xild), 'econ');
-    V = gramschmidt([mu Vild(:,1) Vabl(:,1)]);
+    V = gramschmidt([mu Vabl(:,1) -Vild(:,1)]);
     
     XX  = reshape((XX * V)', 3, 12, 3, []);
 
@@ -42,7 +53,7 @@ for ii = 1
             h = plotEllipsoid(data);
             set(h, 'LineStyle', 'none')
             set(h, 'FaceColor', col(ild,:))
-            set(h, 'FaceAlpha', 0.03)
+            set(h, 'FaceAlpha', .3)
         end
     end
     
@@ -56,28 +67,22 @@ for ii = 1
         end
     end
     
-    % zero
-    plot3(0, 0, 0, 'o', 'MarkerSize', 8+2*3, ...
-        'MarkerFaceColor', [.5 .5 .5], 'MarkerEdgeColor', 'w')
     mu = mean(mean(nanmean(XX,4),3),2);
     plot3([0 mu(1)], [0 mu(2)], [0 mu(3)], 'Color', [0.5 0.5 0.5], 'LineWidth', 2);
     
-    % make movie
-%     h = rotate3d(gca());
-%     set(h, 'Enable', 'on')
-
-    vidObj = VideoWriter('test.avi');
-    open(vidObj);
-    thetas = 1:10:360;
+    set(ann, 'string', labels{ii})
+    
+    thetas = 1:2:360;
     for frame = 1:length(thetas)
         view([cosd(-135+thetas(frame)) sind(-135+thetas(frame)) 0.2])
-        pause(0.01)
-        thisFrame = getframe(gcf,[0 0 700 700]);
-        thisFrame.cdata = thisFrame.cdata(1:700,1:700,:);
+        pause(0.1)
+        framesize = 44;
+        thisFrame = getframe(gcf,[(1000-framesize*16)/2 (1000-framesize*9)/2 framesize*16 framesize*9]);
         writeVideo(vidObj, thisFrame);
     end
-    close(vidObj);
 end
+
+close(vidObj)
 
     function U = gramschmidt(V)
         n = size(V,1);
