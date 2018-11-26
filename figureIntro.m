@@ -75,7 +75,7 @@ xlabel('Coefficient of variation')
 ylabel('Fraction of down states (%)')
 
 [r,p] = corr(l.coefVar(:), l.inactLevel(:));
-text(.1, 75, ['r=' num2str(r,2) ', p=' num2str(p,2)])
+text(.1, 75, ['$$r=' num2str(r,2) '$$'], 'Interpreter', 'latex')
 text(-0.2, 1.2, 'D', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 
 % export

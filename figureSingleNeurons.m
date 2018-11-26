@@ -34,8 +34,8 @@ set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'E', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colAct)
 title('Active sessions')
-text(-0.06, -0.045, ['R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2)])
-text(-0.06, -0.055, ['n = ' num2str(size(beta,1))])
+text(-0.062, -0.045, ['$$R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2) '$$'], 'Interpreter', 'latex')
+text(-0.062, -0.055, ['$$n = ' num2str(size(beta,1)) '$$'], 'Interpreter', 'latex')
 
 subplot(247)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
@@ -67,8 +67,9 @@ set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'B', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colInact)
 title('Inactive sessions')
-text(-0.06, -0.045, ['R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2)])
-text(-0.06, -0.055, ['n = ' num2str(size(beta,1))])
+text(-0.062, -0.045, ['$$R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2) '$$'], 'Interpreter', 'latex')
+text(-0.062, -0.055, ['$$n = ' num2str(size(beta,1)) '$$'], 'Interpreter', 'latex')
+
 
 subplot(243)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
@@ -108,7 +109,7 @@ y = imbalanceILD;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
+text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with contralateral preference'})
 
 subplot(3,4,8)
@@ -118,7 +119,7 @@ y = imbalanceABL;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
+text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with loud preference'})
 
 subplot(3,4,12)
@@ -128,7 +129,7 @@ y = posGain;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['r=' num2str(r,2) ', p=' num2str(p,3)])
+text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with positive gain'})
 set(gca, 'YTick', [0 0.5 1])
 
