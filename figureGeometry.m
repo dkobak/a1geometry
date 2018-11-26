@@ -75,7 +75,7 @@ figure('Position', [100 100 1600 800])
 % SCATTER PLOTS ACROSS SESSIONS
 
 indd = [2 3; 4 5; 1 4; 1 5];
-titles = {'ABL / ILD', 'Noise / Signal plane', 'Mean/Noise', 'Mean / Signal plane'};
+titles = {'ABL / ILD', 'Noise / Signal plane', 'Global / Noise', 'Global / Signal plane'};
 letters = 'DEFG';
 rhos = [];
 rhos_dpca = [];
@@ -95,10 +95,9 @@ for i=1:4
     myscatter(l, y)
     axis([0 2.2 0 90])
     [r,p] = corr(l.coefVar(:), y(:));
-    text(.1, 10, ['r=' num2str(r,2)])
-    text(.1, 20, ['p=' num2str(p,3)])
+    text(.1, 5, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
     title(titles{i})
-    text(-.15, 1.2, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+    text(-.25, 1.2, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
     
     rhos(i) = r;
     rhos_dpca(i) = corr(l.coefVar(:), acosd(S_dpca(:, indd(i,1), indd(i,2))));
@@ -119,7 +118,7 @@ letters = 'BC';
 %subplot(3,3,[1 4])
 subplot(3,12, [1 2 3 4 13 14 15 16]);
 axis square
-text(-.1, 1.12, 'A', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+text(-.1, 1.03, 'A', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 axis off
 
 for ii = 1:2
