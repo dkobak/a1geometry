@@ -21,6 +21,7 @@ for mode = 1:2
         
         for n = 1:size(X,1)
             fr = squeeze(sum(X(n,:,:,6:end,:), 4));
+            fr = nanmean(fr, 3); % regression on the tuning curves
             ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20];
             abl = [20 40 60];
             abl = abl-40;
@@ -33,7 +34,7 @@ for mode = 1:2
     end
     
     subplot(2,3,(mode-1)*3+1)
-    axis([-1 1 -1 1]*0.065)
+    axis([-1 1 -1 1]*0.1)
     axis square
     hold on
     plot([0 0],ylim, 'k')
@@ -41,11 +42,11 @@ for mode = 1:2
     xlabel('ILD coefficient')
     ylabel('ABL coefficient')
     scatter(betas(:,1), betas(:,2), 2, col{mode}, 'MarkerFaceColor', col{mode});
-    set(gca, 'XTick', [-0.05 0 0.05], 'YTick', [-0.05 0 0.05])
+    set(gca, 'XTick', [-.1 -0.05 0 0.05 .1], 'YTick', [-.1 -0.05 0 0.05 .1])
     title(titles{mode})
         
     subplot(2,3,(mode-1)*3+2)
-    axis([-1 1 -.05 .05]*0.065)
+    axis([-1 1 -.05 .05]*0.1)
     axis square
     hold on
     plot([0 0],ylim, 'k')
@@ -53,7 +54,7 @@ for mode = 1:2
     xlabel('ILD coefficient')
     ylabel('ILD{\cdot}ABL coefficient')
     scatter(betas(:,1), betas(:,3), 2, col{mode}, 'MarkerFaceColor', col{mode});
-    set(gca, 'XTick', [-0.05 0 0.05], 'YTick', [-0.003 0 0.003], 'YTickLabels', [-0.003 0 0.003])
+    set(gca, 'XTick', [-.1 -0.05 0 0.05 .1], 'YTick', [-0.005 0 0.005], 'YTickLabels', [-0.005 0 0.005])
     title(titles{mode})
     if mode==2
         [r,p] = corr(betas(:,1), betas(:,3));
@@ -61,7 +62,7 @@ for mode = 1:2
     end
     
     subplot(2,3,(mode-1)*3+3)
-    axis([-1 1 -.05 .05]*0.065)
+    axis([-1 1 -.05 .05]*0.1)
     axis square
     hold on
     plot([0 0],ylim, 'k')
@@ -69,7 +70,7 @@ for mode = 1:2
     xlabel('ABL coefficient')
     ylabel('ILD{\cdot}ABL coefficient')
     scatter(betas(:,2), betas(:,3), 2, col{mode}, 'MarkerFaceColor', col{mode});
-    set(gca, 'XTick', [-0.05 0 0.05], 'YTick', [-0.003 0 0.003], 'YTickLabels', [-0.003 0 0.003])
+    set(gca, 'XTick', [-.1 -0.05 0 0.05 .1], 'YTick', [-0.005 0 0.005], 'YTickLabels', [-0.005 0 0.005])
     title(titles{mode})
 end
 
