@@ -7,7 +7,7 @@ end
 
 figure('Position', [100 50 800 950])
 
-load decoding_results.mat
+load decoding_results_new.mat
 
 % NEUROMETRIC CURVES FOR ACT AND INACT
 

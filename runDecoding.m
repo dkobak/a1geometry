@@ -53,23 +53,46 @@ for d = 1:length(l.datasets)
     decoderWeights{d} = cverr.glmnet_fit.beta(:, cverr.lambda==cverr.lambda_min);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % COMMON DECODER FOR SIGN(ILD) - TIME RESOLVED, ACT ONLY
-    if l.coefVar(d) < 0.6
-        fprintf('Active session. Performing time-resolved decoding (15 steps): ')
-        for t = 1:15
-            X = squeeze(sum(l.datasets{d}(:, :, :, l.time>0 & l.time<t/100, :), 4));
+    % COMMON DECODER FOR SIGN(ILD) - TIME RESOLVED
+    fprintf('time-resolved decoding (15 steps): ')
+    for t = 1:15
+        X = squeeze(sum(l.datasets{d}(:, :, :, l.time>0 & l.time<t/100, :), 4));
+        y = bsxfun(@times, ones([1 12 3 size(X,4)]), [-1 -1 -1 -1 -1 -1 1 1 1 1 1 1]);
+        group = repmat([(1:12)' (13:24)' (25:36)'], [1 1 size(X,4)]);
+        [X,y,group] = cleanup(X,y,group);
+        a = nestedcv(X,y,group);
+        decoding_psych_intime(d, 1:12, 1:3, t) = reshape(a, [12 3]);
+        fprintf('*')
+    end
+    fprintf('\n')
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % COMMON DECODER FOR SIGN(ILD) - SUBSAMPLED NEURONS
+    n = size(l.datasets{d}, 1);
+    fprintf(['subsampling neurons (' num2str(ceil(n/10)) ' steps):\n'])
+    for step = 1:ceil(n/10)
+        fprintf([' -- ' num2str(min(step*10, n)) ' neurons: '])
+        for iter = 1:10
+            rng(d + step + iter)
+            neurons = randperm(n);
+            neurons = neurons(1:min(step*10, n));
+            X = squeeze(sum(l.datasets{d}(neurons, :, :, l.time>0 & l.time<0.15, :), 4));
             y = bsxfun(@times, ones([1 12 3 size(X,4)]), [-1 -1 -1 -1 -1 -1 1 1 1 1 1 1]);
             group = repmat([(1:12)' (13:24)' (25:36)'], [1 1 size(X,4)]);
             [X,y,group] = cleanup(X,y,group);
             a = nestedcv(X,y,group);
-            decoding_psych_intime(d, 1:12, 1:3, t) = reshape(a, [12 3]);
-            fprintf('*')
+            decoding_psych_subsampled(d, 1:12, 1:3, step, iter) = reshape(a, [12 3]);
+            if step == ceil(n/10)
+                decoding_psych_subsampled(d, 1:12, 1:3, step, 2:end) = nan;
+                break
+            else
+                fprintf('*')
+            end
         end
         fprintf('\n')
-    else
-        decoding_psych_intime(d, 1:12, 1:3, 1:15) = nan;
     end
-
+    decoding_psych_subsampled(d, 1:12, 1:3, (ceil(n/10)+1):20, :) = nan;
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ABL-dependent DECODER FOR SIGN(ILD) 
     fprintf('logistic regression for sign(ILD), ABL dependent: ')
@@ -115,7 +138,8 @@ for d = 1:length(l.datasets)
         
     save('decoding_results.mat', 'decoding_abl_contra_linear', 'decoding_abl_ipsi_linear', ...
          'decoding_psych', 'decoding_psych_perabl', 'decoding_psych_shuffle', ...
-         'decoding_psych_shuffleTraining', 'decoderWeights', 'decoding_psych_intime')
+         'decoding_psych_shuffleTraining', 'decoderWeights', 'decoding_psych_intime', ...
+         'decoding_psych_subsampled')
 end
 
 end
