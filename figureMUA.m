@@ -156,7 +156,7 @@ for kk=1:2
     ylim([0 5])
     ylabel('Firing rate (Hz)')
     xlabel('Stimulus type')
-    title('0--150ms')
+    title('0--150 ms')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@ myscatter(l, tuningStrength)
 xlabel('CV')
 ylabel('Contra loud / ipsi silent')
 [r,p] = corr(l.coefVar(:), tuningStrength(:));
-text(0.2, 4.5, ['r=' num2str(r,2) ', p=' num2str(p,3)])
+text(0.2, 4.5, ['$$r=' num2str(r,2) ', p=' num2str(p,'%.5f') '$$'], 'Interpreter', 'latex')
 
 subplot(241)
 text(-0.2, 1.15, 'A', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)

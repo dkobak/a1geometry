@@ -14,7 +14,7 @@
    id="svg7338"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="population.svg"
+   sodipodi:docname="sketch.svg"
    inkscape:export-filename="/home/dmitry/work/pcacca/alfonsoRelated/presentation/2016.10.17 - ciss/population2b.png"
    inkscape:export-xdpi="181.42999"
    inkscape:export-ydpi="181.42999">
@@ -64,16 +64,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="609.17693"
-     inkscape:cy="293.90197"
+     inkscape:zoom="3.959798"
+     inkscape:cx="317.92189"
+     inkscape:cy="454.80575"
      inkscape:document-units="px"
-     inkscape:current-layer="layer11"
+     inkscape:current-layer="layer6"
      showgrid="false"
-     inkscape:window-width="1855"
-     inkscape:window-height="1056"
-     inkscape:window-x="65"
-     inkscape:window-y="24"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      units="mm" />
   <metadata
@@ -84,7 +84,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -28118,19 +28118,19 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32.66466522px;line-height:100%;font-family:Arial;-inkscape-font-specification:'Arial Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       x="301.35724"
-       y="156.28723"
+       x="291.54675"
+       y="158.2247"
        id="text7892"
        sodipodi:linespacing="100%"
        transform="matrix(0.7436275,-0.66859415,0.66859415,0.7436275,0,0)"><tspan
          sodipodi:role="line"
          id="tspan7894"
-         x="301.35724"
-         y="156.28723"
-         style="font-weight:normal;font-size:16.33233261px;line-height:100%;-inkscape-font-specification:Arial;text-align:end;text-anchor:end;fill:#808080">up-down</tspan><tspan
+         x="291.54675"
+         y="158.2247"
+         style="font-weight:normal;font-size:16.33233261px;line-height:100%;-inkscape-font-specification:Arial;text-align:end;text-anchor:end;fill:#808080">Global</tspan><tspan
          sodipodi:role="line"
-         x="301.35724"
-         y="172.61957"
+         x="291.54675"
+         y="174.55704"
          style="font-weight:normal;font-size:16.33233261px;line-height:100%;-inkscape-font-specification:Arial;text-align:end;text-anchor:end;fill:#808080"
          id="tspan7896">axis</tspan></text>
   </g>

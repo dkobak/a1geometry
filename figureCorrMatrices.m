@@ -180,6 +180,7 @@ fprintf('\n')
 
 titles = {'Average correlation', 'Fraction of var in PC1', 'Dimensionality'};
 data = {meancorr, toppc, numdim};
+textverposition = [.8 .1 .8; .8 .8 .1];
 for mode = 1:2
     for stat = 1:3
         subplot(2,5,(mode-1)*5 + 2 + stat)
@@ -192,12 +193,22 @@ for mode = 1:2
         xlabel('CV')
         
         [r,p] = corr(l.coefVar(:), y(:));
-        text(.2, ylims(mode,stat)*.8, ['r=' num2str(r,2) ', p=' num2str(p,3)])
+        if (p>0.04 && p<0.06)
+            precision = 2;
+        else
+            if (p<0.0001)
+                precision = '%.5f';
+            else
+                precision = 1;
+            end
+        end
+        text(.2, ylims(mode,stat)*textverposition(mode,stat), ...
+            ['$$r=' num2str(r,2) ',\, p=' num2str(p,precision) '$$'], 'Interpreter', 'latex')
     end
 end
 
 letters = 'ABCDEFGHIJ';
-xd = [-.15 -.15 -.25 -.25 -.25 -.15 -.15 -.25 -.25 -.25];
+xd = [-.15 -.15 -.3 -.3 -.3 -.15 -.15 -.3 -.3 -.3];
 for i = 1:10
     subplot(2,5,i)
     text(xd(i), 1.12, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)

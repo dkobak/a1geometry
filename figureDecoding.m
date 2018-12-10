@@ -39,7 +39,7 @@ for m = 1:2
     else
         title('Active sessions')
     end
-    text(-0.1, 1.1, letters(m), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+    text(-0.12, 1.1, letters(m), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
     
     for i=1:3
         D = squeeze(mean(decoding_psych(inds{m},:,:),1));

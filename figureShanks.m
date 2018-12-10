@@ -17,6 +17,7 @@ for d = 1:length(datasetInd)
     % compute betas
     for n = 1:size(X,1)
         fr = squeeze(sum(X(n,:,:,:,:), 4)) / 0.15;
+        fr = nanmean(fr, 3); % regression on the tuning curves
         ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20];
         abl = [20 40 60];
         abl = abl-40;
@@ -35,7 +36,7 @@ for d = 1:length(datasetInd)
             h.set('Color', g.CData)
         end
     end
-    axis([-1 1 -1 1]*0.05)
+    axis([-1 1 -1 1]*0.1)
     axis square
     xlabel('ILD')
     ylabel('ABL')
@@ -46,5 +47,5 @@ h = gcf();
 set(h,'Units','Inches');
 pos = get(h,'Position');
 set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(h,'figures/figureShanks2.pdf','-dpdf','-r0')
+print(h,'figures/figureShanks.pdf','-dpdf','-r0')
 
