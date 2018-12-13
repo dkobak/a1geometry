@@ -156,7 +156,7 @@ for kk=1:2
     ylim([0 5])
     ylabel('Firing rate (Hz)')
     xlabel('Stimulus type')
-    title('0--150 ms')
+    title('0–150 ms')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

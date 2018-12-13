@@ -110,6 +110,6 @@ print(h,'figures/figureSingleNeuronsEarlyLate.pdf','-dpdf','-r0')
         if nargin==1
             col = [0 0 0];
         end
-        scatter(beta(:,1), beta(:,2), 10, col, 'MarkerFaceColor', col);
+        scatter(beta(:,1), beta(:,2), 2, col, 'MarkerFaceColor', col);
     end
 end

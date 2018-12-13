@@ -182,7 +182,7 @@ if ~isempty(beta)
         for j=1:3
             x = (1:12) + (j-1)*14;
             for ild=1:12
-                plot(x(ild), X(ild,j), 'o', 'MarkerSize', 5+j*2, 'MarkerFaceColor', col(ild,:), 'MarkerEdgeColor', 'w')
+                plot(x(ild), X(ild,j), 'o', 'MarkerSize', 5+j*2, 'MarkerFaceColor', col(ild,:), 'MarkerEdgeColor', 'none')
             end
         end
         xlim([-5 47])
@@ -269,6 +269,6 @@ end
         if nargin==1
             col = [0 0 0];
         end
-        scatter(beta(:,1), beta(:,2), 10, col, 'MarkerFaceColor', col);
+        scatter(beta(:,1), beta(:,2), 2, col, 'MarkerFaceColor', col);
     end
 end

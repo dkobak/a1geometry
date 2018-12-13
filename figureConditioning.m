@@ -126,14 +126,14 @@ for mode = 1:2
     plot(xlim,[0 0], 'k')
     xlabel('ILD')
     ylabel('ABL')
-    scatter(betas(:,1), betas(:,2), 10, [217,95,2]/256, 'MarkerFaceColor', [217,95,2]/256);
+    scatter(betas(:,1), betas(:,2), 2, [217,95,2]/256, 'MarkerFaceColor', [217,95,2]/256);
     set(gca, 'XTick', [-.1 -0.05 0 0.05 .1], 'YTick', [-.1 -0.05 0 0.05 .1])
 end
 
 letters = 'ABCDEF';
 for i = 1:6
     subplot(2,3,i)
-    text(-0.2, 1.1, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+    text(-0.25, 1.1, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 end
 
 %%%%%%%%%%%%%%%
