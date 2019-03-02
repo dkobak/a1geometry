@@ -84,10 +84,17 @@ print(h,'figures/figureSingleNeuronsEarlyLate.pdf','-dpdf','-r0')
                 ildAll = bsxfun(@times, ild', ones([1 3 size(X,4)]));
                 ablAll = bsxfun(@times, abl,  ones([12 1 size(X,4)]));
                 if ifzscore
-                    b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
+                    [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
                 else
-                    b = regress(fr(ind), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
+                    [b,~,~,~,stats] = regress(fr(ind), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
                 end
+                
+                % filter out all neurons with model p>0.01
+                if stats(3) > 0.01
+                    b = b * nan;
+                    stats(1) = stats(1) * nan;
+                end
+
                 beta = [beta; b(1:2)'];
             end
         end   

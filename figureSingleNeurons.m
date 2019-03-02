@@ -1,4 +1,4 @@
-function figureSingleNeurons(l, ifzscore)
+function figureSingleNeurons(l, ifzscore, iffilter)
 
 % Load the data if not provided
 if nargin==0
@@ -16,30 +16,30 @@ colInact = [217,95,2]/256;
 % ACTIVE EXEMPLARY SESSION
 
 activeExample = 7;
-beta = getBetas(activeExample, ifzscore);
+beta = getBetas(activeExample, ifzscore, iffilter);
 ax5 = subplot(245);
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [-.025 0 0 0])
 text(-0.2, 1.2, 'D', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colAct, ifzscore)
-title('Active session')
+title('Exemplary active session')
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ACTIVE SESSIONS TOGETHER
 
 datasetInd = find(l.coefVar < .6);
-[beta, r2] = getBetas(datasetInd, ifzscore);
+[beta, r2] = getBetas(datasetInd, ifzscore, iffilter);
 subplot(246)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'E', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colAct, ifzscore)
-title('Active sessions')
+title('All active sessions')
 if ifzscore
     text(-0.098, -0.075, ['$$R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2) '$$'], 'Interpreter', 'latex')
-    text(-0.098, -0.09, ['$$n = ' num2str(size(beta,1)) '$$'], 'Interpreter', 'latex')
+    text(-0.098, -0.09, ['$$n = ' num2str(sum(~isnan(r2))) '/' num2str(numel(r2)) '$$'], 'Interpreter', 'latex')
 else
     text(-0.098*5, -0.075*5, ['$$R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2) '$$'], 'Interpreter', 'latex')
-    text(-0.098*5, -0.09*5, ['$$n = ' num2str(size(beta,1)) '$$'], 'Interpreter', 'latex')
+    text(-0.098*5, -0.09*5, ['$$n = ' num2str(sum(~isnan(r2))) '/' num2str(numel(r2)) '$$'], 'Interpreter', 'latex')
 end
 
 subplot(247)
@@ -55,29 +55,29 @@ text(-0.2, 1.2, 'F', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSiz
 % INACTIVE EXEMPLARY SESSION
 
 inactiveExample = 1;
-beta = getBetas(inactiveExample, ifzscore);
+beta = getBetas(inactiveExample, ifzscore, iffilter);
 subplot(241)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [-.025 0 0 0])
 text(-0.2, 1.2, 'A', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colInact, ifzscore)
-title('Inactive session')
+title('Exemplary inactive session')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INACTIVE SESSIONS TOGETHER
 
 datasetInd = find(l.coefVar > 1.2);
-[beta, r2] = getBetas(datasetInd, ifzscore);
+[beta, r2] = getBetas(datasetInd, ifzscore, iffilter);
 subplot(242)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 text(-0.2, 1.2, 'B', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colInact, ifzscore)
-title('Inactive sessions')
+title('All inactive sessions')
 if ifzscore
     text(-0.098, -0.075, ['$$R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2) '$$'], 'Interpreter', 'latex')
-    text(-0.098, -0.09, ['$$n = ' num2str(size(beta,1)) '$$'], 'Interpreter', 'latex')
+    text(-0.098, -0.09, ['$$n = ' num2str(sum(~isnan(r2))) '/' num2str(numel(r2)) '$$'], 'Interpreter', 'latex')
 else
     text(-0.098*5, -0.075*5, ['$$R^2 = ' num2str(nanmean(r2),2) '\pm' num2str(nanstd(r2),2) '$$'], 'Interpreter', 'latex')
-    text(-0.098*5, -0.09*5, ['$$n = ' num2str(size(beta,1)) '$$'], 'Interpreter', 'latex')
+    text(-0.098*5, -0.09*5, ['$$n = ' num2str(sum(~isnan(r2))) '/' num2str(numel(r2)) '$$'], 'Interpreter', 'latex')
 end
 
 subplot(243)
@@ -91,7 +91,7 @@ text(-0.2, 1.2, 'C', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSiz
 % ACROSS DATASETS
 
 for i = 1:length(l.datasets)
-    beta = getBetas(i, ifzscore);
+    beta = getBetas(i, ifzscore, iffilter);
     if ~isempty(beta)
         imbalanceILD(i) = sum(beta(:,1)<0)/sum(~isnan(beta(:,1)));
         imbalanceABL(i) = sum(beta(:,2)>0)/sum(~isnan(beta(:,1)));
@@ -102,14 +102,15 @@ for i = 1:length(l.datasets)
         posGain(i) = nan;
     end
     
-    corrDecoderIld(i) = corr(beta(:,1), decoderWeights{i});
+%     corrDecoderIld(i) = corr(beta(:,1), decoderWeights{i});
     nonzero = decoderWeights{i}~=0;
-    sameSignDecoderIld(i) = mean(beta(nonzero,1).*decoderWeights{i}(nonzero) > 0);
+    signs = beta(nonzero,1) .* decoderWeights{i}(nonzero);
+    sameSignDecoderIld(i) = mean(signs(~isnan(signs)) > 0);
 end
 fprintf(['Fraction of nonzero ILD decoder weights that have the same sign as beta_ild: ', ...
     num2str(mean(sameSignDecoderIld),2) ' +- ' num2str(std(sameSignDecoderIld),2) '\n'])
-fprintf(['Correlations between ILD decoder weights and beta_ild: ', ...
-    num2str(mean(corrDecoderIld),2) ' +- ' num2str(std(corrDecoderIld),2) '\n'])
+% fprintf(['Correlations between ILD decoder weights and beta_ild: ', ...
+%     num2str(mean(corrDecoderIld),2) ' +- ' num2str(std(corrDecoderIld),2) '\n'])
 
 subplot(3,4,4)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
@@ -128,7 +129,7 @@ y = imbalanceABL;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
+text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p, '%1.5f') '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with loud preference'})
 
 subplot(3,4,12)
@@ -138,7 +139,7 @@ y = posGain;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
+text(0.2, 0.7, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with positive gain'})
 set(gca, 'YTick', [0 0.5 1])
 
@@ -148,7 +149,7 @@ set(gca, 'YTick', [0 0.5 1])
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INSETS WITH SINGLE NEURONS ON SUBPLOT 1
 
-beta = getBetas(activeExample, ifzscore);
+beta = getBetas(activeExample, ifzscore, iffilter);
 if ~isempty(beta)
     ind = [33 44 3 17 34 114 49 95];
     axes(ax5)
@@ -206,20 +207,22 @@ h = gcf();
 set(h,'Units','Inches');
 pos = get(h,'Position');
 set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-if ifzscore
+if iffilter && ifzscore
     print(h,'figures/figureSingleNeurons.pdf','-dpdf','-r0')
-else
+elseif iffilter
     print(h,'figures/figureSingleNeurons-nonzscored.pdf','-dpdf','-r0')
+elseif ifzscore
+    print(h,'figures/figureSingleNeurons-nonfiltered.pdf','-dpdf','-r0')
 end    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    function [beta, r2] = getBetas(datasetInd, ifzscore)
+    function [beta, r2] = getBetas(datasetInd, ifzscore, iffilter)
         beta = [];
         r2 = [];
         
         ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20];
         abl = [20 40 60];
-        abl = abl-40;
+        abl = abl - 40;
 
         for d = 1:length(datasetInd)
             X = squeeze(sum(l.datasets{datasetInd(d)}(:,:,:,l.time>0 & l.time<0.15,:),4) / 0.15);
@@ -227,15 +230,31 @@ end
             
             for n = 1:size(X,1)
                 fr = X(n,:,:,:); 
+                
                 ind = ~isnan(fr(:));
                 ildAll = bsxfun(@times, ild', ones([1 3 size(X,4)]));
                 ablAll = bsxfun(@times, abl,  ones([12 1 size(X,4)]));
                 if ifzscore
                     [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1) ildAll(ind).*ablAll(ind)]);
+%                     [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)]);
+                    
+                    % just in case a neuron has all values 0
+                    if sum(fr(ind))==0
+                        b = b * 0;
+                        stats(1) = 1;
+                        stats(3) = 1;
+                    end
                 else
                     [b,~,~,~,stats] = regress(fr(ind), [ildAll(ind) ablAll(ind) ones(sum(ind), 1) ildAll(ind).*ablAll(ind)]);
                 end
-                    beta = [beta; b(1:2)'];
+                                
+                % filter out all neurons with model p>0.01
+                if iffilter && (stats(3) > 0.01)
+                    b = b * nan;
+                    stats(1) = stats(1) * nan;
+                end
+                
+                beta = [beta; b(1:2)'];
                 r2 = [r2; stats(1)];
                 
 %                 y = squeeze(nanmean(X(n,:,:,:),4));

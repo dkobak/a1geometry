@@ -5,7 +5,7 @@ if nargin==0
     l = load('evokedResponses_150to150.mat');
 end
 
-figure('Position', [100 100 500 800])
+figure('Position', [100 100 1500 400])
 
 % Stimuli
 
@@ -14,7 +14,7 @@ col = parula12();
 ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20];
 abl = [20 40 60];
 
-subplot(3,2,5)
+subplot(143)
 hold on
 for i=1:12
     for j=1:3
@@ -36,7 +36,7 @@ times = [60 6100];
 for session=1:2
     load(files{session})
 
-    subplot(3,2,(session-1)*2+[1 2])
+    subplot(2,4,(session-1)*4+[1 2])
     hold on
     tint = times(session) + [0 20];
 
@@ -56,19 +56,19 @@ for session=1:2
     ylim([1 length(spikes)+1])
     
     plot(tint(1)+[0 2], [2 2], 'k', 'LineWidth', 2)
-    text(tint(1)+.5, 10, '2 s')
+    text(tint(1)+.6, 12, '2 s')
     
     set(gca, 'visible', 'off')
 end
 
-subplot(3,2,[1 2])
+subplot(2,4,[1 2])
 text(-0.08, 1.1, 'A', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
-subplot(3,2,[3 4])
+subplot(2,4,[5,6])
 text(-0.08, 1.1, 'B', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 
 % CV vs fraction of down states across sessions
 
-subplot(3,2,6)
+subplot(144)
 myscatter(l, l.inactLevel)
 ylim([0 80])
 xlabel('Coefficient of variation')
