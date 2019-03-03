@@ -54,9 +54,9 @@ for k=1:2
     xlabel('Time (s)')
     
     if k==1
-        title('Inactive session')
+        title('Exemplary inactive session')
     else
-        title('Active session')
+        title('Exemplary active session')
     end
 end
 
@@ -106,8 +106,8 @@ for kk=1:2
     axis([-0.05 0.15 0 5])
     plot(xlim, baseline*[1 1], 'Color', [.5 .5 .5])
     plot([0 0], ylim, 'Color', [.5 .5 .5])
-    plot([0.02 0.02], ylim, '--', 'Color', [.5 .5 .5])
-    plot([0.04 0.04], ylim, '--', 'Color', [.5 .5 .5])
+%     plot([0.02 0.02], ylim, '--', 'Color', [.5 .5 .5])
+%     plot([0.04 0.04], ylim, '--', 'Color', [.5 .5 .5])
     t = l.time(l.time>-0.05 & l.time<0.15);
     
     col = parula12();
@@ -122,9 +122,9 @@ for kk=1:2
     ylabel('Firing rate (Hz)')
     xlabel('Time (s)')
     if kk==1
-        title('Inactive sessions')
+        title('All inactive sessions')
     else
-        title('Active sessions')
+        title('All active sessions')
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,8 +155,14 @@ for kk=1:2
     set(gca,'XTick',[])
     ylim([0 5])
     ylabel('Firing rate (Hz)')
-    xlabel('Stimulus type')
-    title('0–150 ms')
+    ax = gca();
+    ax.XAxis.Visible = 'off';
+    title('Tuning')
+    
+    for j=1:3
+        text((j-1)*14 + 6.5, 4 - (kk-1)*3.5, {'ABL',num2str(j*20)}, 'HorizontalAlignment', 'center')
+    end
+    text(14+6.5, .4 + (kk-1)*1.3, {'-20·····0·····20', 'ILD'}, 'HorizontalAlignment', 'center')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

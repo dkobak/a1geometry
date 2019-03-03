@@ -21,7 +21,7 @@ ax5 = subplot(245);
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [-.025 0 0 0])
 text(-0.2, 1.2, 'D', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colAct, ifzscore)
-title('Exemplary active session')
+title({'Exemplary','active session'})
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,7 @@ end
 subplot(247)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
 if ~isempty(beta)
-    polarhistogram(atan2(beta(:,2), beta(:,1)), 20, 'FaceColor',colAct,'FaceAlpha',.5, ...
+    polarhistogram(atan2(beta(:,2), beta(:,1)), -pi/16:pi/8:2*pi-.001, 'FaceColor',colAct,'FaceAlpha',.5, ...
         'EdgeColor',colAct)
 end
 text(-0.2, 1.2, 'F', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
@@ -60,7 +60,7 @@ subplot(241)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [-.025 0 0 0])
 text(-0.2, 1.2, 'A', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 scatterBetas(beta, colInact, ifzscore)
-title('Exemplary inactive session')
+title({'Exemplary','inactive session'})
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INACTIVE SESSIONS TOGETHER
@@ -82,7 +82,7 @@ end
 
 subplot(243)
 set(gca, 'OuterPosition', get(gca,'OuterPosition') + [.025 0 0 0])
-polarhistogram(atan2(beta(:,2), beta(:,1)), 20, 'FaceColor', colInact,'FaceAlpha',.5, ...
+polarhistogram(atan2(beta(:,2), beta(:,1)), -pi/16:pi/8:2*pi-.001, 'FaceColor', colInact,'FaceAlpha',.5, ...
     'EdgeColor', colInact)
 text(-0.2, 1.2, 'C', 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
 
@@ -95,7 +95,7 @@ for i = 1:length(l.datasets)
     if ~isempty(beta)
         imbalanceILD(i) = sum(beta(:,1)<0)/sum(~isnan(beta(:,1)));
         imbalanceABL(i) = sum(beta(:,2)>0)/sum(~isnan(beta(:,1)));
-        posGain(i) = nanmean(beta(:,1).*beta(:,2)<0);
+        posGain(i) = sum(beta(:,1).*beta(:,2)<0)/sum(~isnan(beta(:,1)));
     else
         imbalanceILD(i) = nan;
         imbalanceABL(i) = nan;
@@ -119,7 +119,7 @@ y = imbalanceILD;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
+text(0.2, 0.1, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with contralateral preference'})
 
 subplot(3,4,8)
@@ -129,7 +129,7 @@ y = imbalanceABL;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.2, ['$$r=' num2str(r,2) ', p=' num2str(p, '%1.5f') '$$'], 'Interpreter', 'latex')
+text(0.2, 0.1, ['$$r=' num2str(r,2) ', p=' num2str(p, 1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with loud preference'})
 
 subplot(3,4,12)
@@ -139,7 +139,7 @@ y = posGain;
 myscatter(l,y)
 xlabel('CV')
 [r,p] = corr(l.coefVar(:), y(:));
-text(0.2, 0.7, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
+text(0.2, 0.1, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
 ylabel({'Fraction of neurons','with positive gain'})
 set(gca, 'YTick', [0 0.5 1])
 
@@ -207,6 +207,9 @@ h = gcf();
 set(h,'Units','Inches');
 pos = get(h,'Position');
 set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+ax = findobj(gcf,'type','axes');
+set(findall(ax,'type','text'),'FontName', 'Helvetica')
+set(findall(gcf,'type','text'),'FontName', 'Helvetica')
 if iffilter && ifzscore
     print(h,'figures/figureSingleNeurons.pdf','-dpdf','-r0')
 elseif iffilter
@@ -237,15 +240,15 @@ end
                 if ifzscore
                     [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1) ildAll(ind).*ablAll(ind)]);
 %                     [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)]);
-                    
-                    % just in case a neuron has all values 0
-                    if sum(fr(ind))==0
-                        b = b * 0;
-                        stats(1) = 1;
-                        stats(3) = 1;
-                    end
                 else
                     [b,~,~,~,stats] = regress(fr(ind), [ildAll(ind) ablAll(ind) ones(sum(ind), 1) ildAll(ind).*ablAll(ind)]);
+                end
+                
+                % just in case a neuron has all values 0
+                if sum(fr(ind))==0
+                    b = b * 0;
+                    stats(1) = 1;
+                    stats(3) = 1;
                 end
                                 
                 % filter out all neurons with model p>0.01
@@ -283,8 +286,8 @@ end
         hold on
         plot([0 0],ylim, 'k')
         plot(xlim,[0 0], 'k')
-        xlabel('ILD coefficient')
-        ylabel('ABL coefficient')
+        xlabel('$\beta_\mathrm{ILD}$','Interpreter','latex')
+        ylabel('$\beta_\mathrm{ABL}$','Interpreter','latex')
         if nargin==1
             col = [0 0 0];
         end

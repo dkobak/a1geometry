@@ -1,11 +1,11 @@
-function figureConditioning(l, ll)
+function figureConditioning(l)
 
 % Load the data if not provided
 if nargin==0
     l = load('evokedResponses_150to150.mat');
 end
 
-figure('Position', [100 100 1200 600])
+figure('Position', [100 100 1500 750])
 
 sessions = find(l.coefVar>1.2);
 
@@ -55,8 +55,10 @@ for mode = 1:2
             ildAll = bsxfun(@times, ild', ones([1 3 size(fr,3)]));
             ablAll = bsxfun(@times, abl,  ones([12 1 size(fr,3)]));
             ind = ~isnan(fr(:));
-            b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)]);
-            betas = [betas; b(1:2)'];
+            [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)]);
+            if stats(3)<0.01
+                betas = [betas; b(1:2)'];
+            end
         end
                
         X = mean(X,1);
@@ -124,8 +126,8 @@ for mode = 1:2
     hold on
     plot([0 0],ylim, 'k')
     plot(xlim,[0 0], 'k')
-    xlabel('ILD')
-    ylabel('ABL')
+    xlabel('$\beta_\mathrm{ILD}$','Interpreter','latex')
+    ylabel('$\beta_\mathrm{ABL}$','Interpreter','latex')
     scatter(betas(:,1), betas(:,2), 2, [217,95,2]/256, 'MarkerFaceColor', [217,95,2]/256);
     set(gca, 'XTick', [-.1 -0.05 0 0.05 .1], 'YTick', [-.1 -0.05 0 0.05 .1])
 end

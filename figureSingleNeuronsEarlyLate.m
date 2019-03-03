@@ -112,8 +112,8 @@ print(h,'figures/figureSingleNeuronsEarlyLate.pdf','-dpdf','-r0')
         hold on
         plot([0 0],ylim, 'k')
         plot(xlim,[0 0], 'k')
-        xlabel('ILD')
-        ylabel('ABL')
+        xlabel('$\beta_\mathrm{ILD}$','Interpreter','latex')
+        ylabel('$\beta_\mathrm{ABL}$','Interpreter','latex')
         if nargin==1
             col = [0 0 0];
         end

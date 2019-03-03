@@ -24,22 +24,27 @@ for d = 1:length(datasetInd)
         ildAll = bsxfun(@times, ild', ones([1 3 size(fr,3)]));
         ablAll = bsxfun(@times, abl,  ones([12 1 size(fr,3)]));
         ind = ~isnan(fr(:));
-        b = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)]);
+        [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ones(sum(ind), 1)]);
         betas(n,:) = b(1:2);
+        if stats(3)>0.01
+            betas(n,:) = [nan; nan];
+        end
     end
+    shanks = l.shanks{ii}(~isnan(betas(:,1)));
+    betas = betas(~isnan(betas(:,1)),:);
     
     hold on
     for i=1:8
-        g = scatter(betas(l.shanks{ii}==i,1), betas(l.shanks{ii}==i,2), '.');
-        if sum(l.shanks{ii}==i) >= 5
-            h = plotEllipse(betas(l.shanks{ii}==i,1:2), .9);
+        g = scatter(betas(shanks==i,1), betas(shanks==i,2), '.');
+        if sum(shanks==i) >= 5
+            h = plotEllipse(betas(shanks==i,1:2), .9);
             h.set('Color', g.CData)
         end
     end
     axis([-1 1 -1 1]*0.1)
     axis square
-    xlabel('ILD')
-    ylabel('ABL')
+    xlabel('$\beta_\mathrm{ILD}$','Interpreter','latex')
+    ylabel('$\beta_\mathrm{ABL}$','Interpreter','latex')
 end
 
 % export
