@@ -11,15 +11,18 @@ colAct = [27,158,119]/256;
 colInact = [217,95,2]/256;
 
 datasetInd = find(l.coefVar > 1.2);
-beta = getBetas(datasetInd, l.time>0 & l.time<0.05, true);
+beta_early = getBetas(datasetInd, l.time>0 & l.time<0.05, true);
 subplot(241)
-scatterBetas(beta, colInact, true)
+scatterBetas(beta_early, colInact, true)
 title('Inactive sessions. 0–50 ms')
+text(-0.09, -0.09, ['$$n = ' num2str(sum(~isnan(beta_early(:,1)))) '/' num2str(size(beta_early,1)) '$$'], 'Interpreter', 'latex')
 
-beta = getBetas(datasetInd, l.time>0.1 & l.time<0.15, true);
+beta_late = getBetas(datasetInd, l.time>0.1 & l.time<0.15, true);
 subplot(242)
-scatterBetas(beta, colInact, true)
+scatterBetas(beta_late, colInact, true)
 title('Inactive sessions. 100–150 ms')
+nanmean(sqrt(sum((beta_late-beta_early).^2,2)))
+text(-0.09, -0.09, ['$$n = ' num2str(sum(~isnan(beta_late(:,1)))) '/' num2str(size(beta_late,1)) '$$'], 'Interpreter', 'latex')
 
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05, false);
 subplot(243)
@@ -32,17 +35,23 @@ scatterBetas(beta, colInact, false)
 title({'Inactive sessions. 100–150 ms','Without z-scoring'})
 
 datasetInd = find(l.coefVar < .6);
-beta = getBetas(datasetInd, l.time>0 & l.time<0.05, true);
+beta_early = getBetas(datasetInd, l.time>0 & l.time<0.05, true);
 subplot(245)
-scatterBetas(beta, colAct, true)
+scatterBetas(beta_early, colAct, true)
 % inspect = [34,35,60,91,95];
 % scatter(beta(inspect,1), beta(inspect,2), 20, [1 0 0], 'MarkerFaceColor', 'r')
 title('Active sessions. 0–50 ms')
+text(-0.09, -0.09, ['$$n = ' num2str(sum(~isnan(beta_early(:,1)))) '/' num2str(size(beta_early,1)) '$$'], 'Interpreter', 'latex')
 
-beta = getBetas(datasetInd, l.time>0.1 & l.time<0.15, true);
+beta_late = getBetas(datasetInd, l.time>0.1 & l.time<0.15, true);
 subplot(246)
-scatterBetas(beta, colAct, true)
+scatterBetas(beta_late, colAct, true)
 title('Active sessions. 100–150 ms')
+text(-0.09, -0.09, ['$$n = ' num2str(sum(~isnan(beta_late(:,1)))) '/' num2str(size(beta_late,1)) '$$'], 'Interpreter', 'latex')
+% for i=1:size(beta_early,1)
+%     plot([beta_early(i,1) beta_late(i,1)], [beta_early(i,2) beta_late(i,2)], 'k')
+% end
+nanmean(sqrt(sum((beta_late-beta_early).^2,2)))
 
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05, false);
 subplot(247)
@@ -87,6 +96,13 @@ print(h,'figures/figureSingleNeuronsEarlyLate.pdf','-dpdf','-r0')
                     [b,~,~,~,stats] = regress(zscore(fr(ind)), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
                 else
                     [b,~,~,~,stats] = regress(fr(ind), [ildAll(ind) ablAll(ind) ildAll(ind).*ablAll(ind) ones(sum(ind), 1)]);
+                end
+                
+                % just in case a neuron has all values 0
+                if sum(fr(ind))==0
+                    b = b * 0;
+                    stats(1) = 1;
+                    stats(3) = 1;
                 end
                 
                 % filter out all neurons with model p>0.01
