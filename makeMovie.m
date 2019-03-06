@@ -26,7 +26,7 @@ ann = annotation('textbox',[0.45 0.6 0.1 0.1], 'string', ' ', 'Color', 'w', ...
                  'HorizontalAlignment', 'center');
 annotation('ellipse', [.495 .495 .01 .01], 'FaceColor', [.5 .5 .5], 'Color', 'w')
              
-vidObj = VideoWriter('geometry.avi');
+vidObj = VideoWriter('animations/geometry.avi');
 open(vidObj);
 
 for ii = 1:2
