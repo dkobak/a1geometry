@@ -10,7 +10,7 @@ for i=3:length(files)    % note that first two are '.' and '..'
     end
 end
 
-fig = figure('Position', [100 100 1200 900]);
+fig = figure('Position', [100 100 1500 900]);
 
 for fileNum = 1:length(fileList)
     pause(0.01)
