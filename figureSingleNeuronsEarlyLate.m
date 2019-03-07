@@ -21,8 +21,12 @@ beta_late = getBetas(datasetInd, l.time>0.1 & l.time<0.15, true);
 subplot(242)
 scatterBetas(beta_late, colInact, true)
 title('Inactive sessions. 100–150 ms')
-nanmean(sqrt(sum((beta_late-beta_early).^2,2)))
 text(-0.09, -0.09, ['$$n = ' num2str(sum(~isnan(beta_late(:,1)))) '/' num2str(size(beta_late,1)) '$$'], 'Interpreter', 'latex')
+
+m = nanmean(sqrt(sum((beta_late-beta_early).^2,2)));
+s = nanstd(sqrt(sum((beta_late-beta_early).^2,2)));
+n = sum(~isnan(beta_late(:,1)-beta_early(:,1)));
+fprintf(['Distance in inact: ' num2str(m,2) ' +- ' num2str(s,2) ', n=' num2str(n) '\n'])
 
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05, false);
 subplot(243)
@@ -51,7 +55,11 @@ text(-0.09, -0.09, ['$$n = ' num2str(sum(~isnan(beta_late(:,1)))) '/' num2str(si
 % for i=1:size(beta_early,1)
 %     plot([beta_early(i,1) beta_late(i,1)], [beta_early(i,2) beta_late(i,2)], 'k')
 % end
-nanmean(sqrt(sum((beta_late-beta_early).^2,2)))
+
+m = nanmean(sqrt(sum((beta_late-beta_early).^2,2)));
+s = nanstd(sqrt(sum((beta_late-beta_early).^2,2)));
+n = sum(~isnan(beta_late(:,1)-beta_early(:,1)));
+fprintf(['Distance in act: ' num2str(m,2) ' +- ' num2str(s,2) ', n=' num2str(n) '\n'])
 
 beta = getBetas(datasetInd, l.time>0 & l.time<0.05, false);
 subplot(247)

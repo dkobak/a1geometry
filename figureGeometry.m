@@ -1,14 +1,22 @@
-function figureGeometry(l)
+function figureGeometry(l, ifearly)
 
 % Load the data if not provided
 if nargin==0
     l = load('evokedResponses_150to150.mat');
 end
 
+if nargin<2
+    ifearly = false;
+end
+
 addpath('../dpca/matlab')
 
 begtime = 0.00;
 endtime = 0.15;
+
+if ifearly
+    endtime = 0.05;
+end
 
 for d = 1:length(l.datasets)
     X = squeeze(sum(l.datasets{d}(:,:,:,l.time>begtime & l.time<endtime ,:),4) / (endtime-begtime));
@@ -36,7 +44,7 @@ for d = 1:length(l.datasets)
     end
     Xav = nanmean(X,4);
 %     optimalLambda = dpca_optimizeLambda(Xav, X, trialNum, 'simultaneous', true, 'numRep', 10, 'display', 'no');
-    optimalLambda = 1e-5; % for speed!
+    optimalLambda = 1e-5; % for speed; result is practically the same!
     Cnoise = dpca_getNoiseCovariance(Xav, X, trialNum, 'simultaneous', true);
     [~,V,whichMarg] = dpca(Xav, 5, 'lambda', optimalLambda, 'Cnoise', Cnoise);
     Vild_dpca = V(:, find(whichMarg==1,1));
@@ -69,7 +77,11 @@ fprintf(['Angle between ABL and mean:  ' num2str(r), ', p = ' num2str(p) '\n'])
 [r,p] = corr(l.coefVar, acosd(S(:,3,1)));
 fprintf(['Angle between ILD and mean:  ' num2str(r), ', p = ' num2str(p) '\n']) 
 
-figure('Position', [100 100 1600 800])
+if ifearly
+    figure('Position', [100 100 1200 275])
+else
+    figure('Position', [100 100 1600 800])
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SCATTER PLOTS ACROSS SESSIONS
@@ -80,8 +92,11 @@ letters = 'DEFG';
 rhos = [];
 rhos_dpca = [];
 for i=1:4
-    % subplot(3,18,18*2+[(i-1)*3+1 : (i-1)*3+3] + 1)
-    subplot(3, 12, 24 + [(i-1)*3 + 1 : (i-1)*3 + 3])
+    if ifearly
+        subplot(1,4,i)
+    else
+        subplot(3, 12, 24 + [(i-1)*3 + 1 : (i-1)*3 + 3])
+    end
     
     axis([0 2.2 0 90])
     hold on
@@ -95,9 +110,21 @@ for i=1:4
     myscatter(l, y)
     axis([0 2.2 0 90])
     [r,p] = corr(l.coefVar(:), y(:));
-    text(.1, 5, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
+    if ~ifearly
+        text(.1, 5, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '$$'], 'Interpreter', 'latex')
+    else    
+        [~,pp] = robustfit(l.coefVar(:), y(:));
+        if p>0.0001
+            text(.1, 5, ['$$r=' num2str(r,2) ', p=' num2str(p,1) '; p_r = ' num2str(pp.p(2),1) '$$'], 'Interpreter', 'latex')
+        else
+            text(.1, 5, ['$$r=' num2str(r,2) ', p=' num2str(p,'%.5f') '; p_r = ' num2str(pp.p(2),1) '$$'], 'Interpreter', 'latex')
+        end
+    end
+    
     title(titles{i})
-    text(-.25, 1.2, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+    if ~ifearly
+        text(-.25, 1.2, letters(i), 'Units', 'Normalized', 'VerticalAlignment', 'Top', 'FontSize', 17)
+    end
     
     rhos(i) = r;
     rhos_dpca(i) = corr(l.coefVar(:), acosd(S_dpca(:, indd(i,1), indd(i,2))));
@@ -106,6 +133,14 @@ end
 d = rhos_dpca - rhos;
 fprintf(['Max PCA/dPCA difference in correlations: ' num2str(max(abs(d))) '\n'])
 
+if ifearly
+    h = gcf();
+    set(h,'Units','Inches');
+    pos = get(h,'Position');
+    set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+    print(h,'figures/figureGeometryEarly.pdf','-dpdf','-r0')
+    return
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TWO EXAMPLE PCA PLOTS
