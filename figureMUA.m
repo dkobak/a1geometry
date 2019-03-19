@@ -98,7 +98,7 @@ for kk=1:2
     mua_smooth = mean(muas_smooth,4);
     
     mua = squeeze(mean(muas,4));
-    baseline = mua(:,:,1:5);
+    baseline = mua(:,:,l.time(l.time>-0.05 & l.time<0.15)<0);
     baseline = mean(baseline(:));
     
     subplot(2,4,(kk-1)*4+2)
@@ -130,8 +130,8 @@ for kk=1:2
     %%%%%%%%%%%%%%%%%%%%%%%%%%
     % tuning curves
 
-    muaOnset = mean(mua(:,:,8:9),3);
-    mua = mean(mua(:,:,6:end),3);
+    muaOnset = mean(mua(:,:,l.time(l.time>-0.05 & l.time<0.15)>0.02 & l.time(l.time>-0.05 & l.time<0.15)<0.04),3);
+    mua = mean(mua(:,:,l.time(l.time>-0.05 & l.time<0.15)>0),3);
     
     subplot(2,4,(kk-1)*4+3)
     hold on
@@ -142,8 +142,8 @@ for kk=1:2
     for j=1:3
         x = (1:12) + (j-1)*14;
         for i=1:12
-            plot(x(i), mua(i,j), 'o', 'MarkerSize', 5+j*2, 'MarkerFaceColor', col(i,:), 'MarkerEdgeColor', 'w')
             plot(x(i), muaOnset(i,j), '.', 'Color', col(i,:)*.6+[1 1 1]*.4, 'MarkerSize', 8)
+            plot(x(i), mua(i,j), 'o', 'MarkerSize', 5+j*2, 'MarkerFaceColor', col(i,:), 'MarkerEdgeColor', 'w')
         end
         
         ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20]';

@@ -47,7 +47,7 @@ for mode = 1:2
         
         % getting betas for each neuron
         for n = 1:size(X,1)
-            fr = squeeze(sum(X(n,:,:,6:end,:), 4));
+            fr = squeeze(sum(X(n,:,:,l.time(l.time>-0.05 & l.time<0.15)>0,:), 4));
             fr = nanmean(fr, 3); % regression on the tuning curves
             ild = [-20 -10 -6 -4.5 -3 -1.5 1.5 3 4.5 6 10 20];
             abl = [20 40 60];
@@ -100,10 +100,10 @@ for mode = 1:2
     hold on
 
     mua = mean(muas,4);
-    baseline = mua(:,:,1:5);
+    baseline = mua(:,:,l.time(l.time>-0.05 & l.time<0.15)<0);
     baseline = mean(baseline(:));
-    muaOnset = mean(mua(:,:,8:9),3);
-    mua = mean(mua(:,:,6:end),3);
+    muaOnset = mean(mua(:,:,l.time(l.time>-0.05 & l.time<0.15)>0.02 & l.time(l.time>-0.05 & l.time<0.15)<0.04),3);
+    mua = mean(mua(:,:,l.time(l.time>-0.05 & l.time<0.15)>0),3);
 
     xlim([0 42])
     plot(xlim, baseline*[1 1], 'Color', [.5 .5 .5])

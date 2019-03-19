@@ -229,7 +229,7 @@ end
 
         for d = 1:length(datasetInd)
             X = squeeze(sum(l.datasets{datasetInd(d)}(:,:,:,l.time>0 & l.time<0.15,:),4) / 0.15);
-            X = nanmean(X,4); % comment this line out to perform the regression on single trials
+            X = nanmean(X,4); 
             
             for n = 1:size(X,1)
                 fr = X(n,:,:,:); 
@@ -259,17 +259,6 @@ end
                 
                 beta = [beta; b(1:2)'];
                 r2 = [r2; stats(1)];
-                
-%                 y = squeeze(nanmean(X(n,:,:,:),4));
-%                 y = (y - mean(fr(ind)))/std(fr(ind));
-%                 x1 = [ild' ild' ild'];
-%                 x2 = repmat(abl, [length(ild) 1]);
-%                 y = y(:);
-%                 x1 = x1(:);
-%                 x2 = x2(:);
-%                 % yhat = x1*b(1) + x2*b(2) + b(3);
-%                 yhat = x1*b(1) + x2*b(2) + b(3) + b(4)*x1.*x2;
-%                 r2 = [r2; 1-sum((y-yhat).^2)/sum((y-mean(y)).^2)];  
             end
         end
     end
