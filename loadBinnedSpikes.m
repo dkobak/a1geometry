@@ -1,4 +1,4 @@
-function [Xtrial, Xspikes, shanks, inactLevel, fano, cv] = loadBinnedSpikes(fileName, binBorders, intervalsToUse)
+function [Xtrial, Xspikes, shanks, inactLevel, fano, cv, Xspikecount] = loadBinnedSpikes(fileName, binBorders, intervalsToUse)
 
 % Loads a file with fileName, bins spikes in between the binBorders
 % Returns Xtrial(N, ild, abl, timebin, trial) array
@@ -60,4 +60,22 @@ end
 
 Xtrial = XevokedT(:,:,:,:,1:max(nn(:)));
 Xspikes = Xspikes(:,:,:,1:maxnspikes,1:max(nn(:)));
+
+% to export the spike count data
+
+Xspikecount = nan(3600*4 + 1, length(mydata.spikes) + 6);
+for i = stimInterval(1):stimInterval(2)
+    if ~isempty(find(sum(intervalsToUse-mydata.stimOnsetTime(i)/60 > 0, 2) == 1, 1))
+        for n = 1:length(mydata.spikes)
+            h = histc(mydata.spikes{n}, mydata.stimOnsetTime(i) + [-0.05 0 0.05 0.1 0.15]);
+            rows = (i-stimInterval(1)) * 4 + [1 2 3 4] + 1;
+            Xspikecount(rows, 6 + n) = h(1:end-1);
+            Xspikecount(rows, 2) = cv;
+            Xspikecount(rows, 3) = i-stimInterval(1) + 1;
+            Xspikecount(rows, 4) = mydata.ABL(i);
+            Xspikecount(rows, 5) = mydata.ILD(i);
+            Xspikecount(rows, 6) = [-0.025 0.025 0.075 0.025];
+        end
+    end
+end
 

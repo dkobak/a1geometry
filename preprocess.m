@@ -46,8 +46,8 @@ for filenum = 1:length(fileList)
     display(['Processing file ' num2str(filenum) '...'])
     
     i = find(strcmp(filesToSplit, fileList{filenum}));
-    if isempty(i) 
-        [Xtrial, Xspikes, sh, il, fano, cv] = loadBinnedSpikes(fileList{filenum}, timeEdge);
+    if isempty(i)
+        [Xtrial, Xspikes, sh, il, fano, cv, Xspikecount] = loadBinnedSpikes(fileList{filenum}, timeEdge);
         fileNum = [fileNum; filenum];
         fileName{length(fileNum)} = fileList{filenum};
         ifSplit = [ifSplit; 0];
@@ -59,10 +59,14 @@ for filenum = 1:length(fileList)
         datasets{length(fileNum)} = Xtrial;
         spikes{length(fileNum)} = Xspikes;
         shanks{length(fileNum)} = sh;
+        
+        Xspikecount(2:end,1) = length(fileNum);
+        Xspikecount(1, 1:6) = 0;
+        Xspikecount(1, 7:end) = sh;
     else
         display('Splitting in two...')
         
-        [Xtrial, Xspikes, sh, il, fano, cv] = loadBinnedSpikes(fileList{filenum}, timeEdge, actPeriods{i});
+        [Xtrial, Xspikes, sh, il, fano, cv, Xspikecount1] = loadBinnedSpikes(fileList{filenum}, timeEdge, actPeriods{i});
         fileNum = [fileNum; filenum];
         fileName{length(fileNum)} = fileList{filenum};
         ifSplit = [ifSplit; 1];
@@ -75,7 +79,7 @@ for filenum = 1:length(fileList)
         spikes{length(fileNum)} = Xspikes;
         shanks{length(fileNum)} = sh;
         
-        [Xtrial, Xspikes, sh, il, fano, cv] = loadBinnedSpikes(fileList{filenum}, timeEdge, inactPeriods{i});
+        [Xtrial, Xspikes, sh, il, fano, cv, Xspikecount2] = loadBinnedSpikes(fileList{filenum}, timeEdge, inactPeriods{i});
         fileNum = [fileNum; filenum];
         fileName{length(fileNum)} = fileList{filenum};
         ifSplit = [ifSplit; 1];
@@ -87,7 +91,15 @@ for filenum = 1:length(fileList)
         datasets{length(fileNum)} = Xtrial;  
         spikes{length(fileNum)} = Xspikes;
         shanks{length(fileNum)} = sh;
+        
+        Xspikecount1(2:end,1) = Xspikecount1(2:end,2)*0 + length(fileNum) - 1;
+        Xspikecount2(2:end,1) = Xspikecount2(2:end,2)*0 + length(fileNum);
+        Xspikecount = nansum(cat(3,Xspikecount1, Xspikecount2),3);
+        Xspikecount(1, 1:6) = 0;
+        Xspikecount(1, 7:end) = sh;
     end
+    
+    csvwrite(['spikecounts/' fileList{filenum}(1:end-3) 'csv'], Xspikecount)
     
     save(outputFileName, 'datasets', 'time', ...
         'inactLevel', 'ifSplit', 'fileNum', 'fileName', 'expNum', 'blockNum', ...
