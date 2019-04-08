@@ -23,6 +23,7 @@ end
 fig = figure('Position', [100 100 1500 500]);
 colormap(parula)
 
+rng(42)
 numRep = 100; % number of shuffles
 
 %%%%%%%%%%% TWO EXAMPLE DATASETS
@@ -38,8 +39,8 @@ for ex = 1:2
     xx = squeeze(sum(xx,4)) / 0.15;
     Xsignal = nanmean(xx,4);
     Xnoise = bsxfun(@minus, xx, Xsignal);
-
-    % subtracting running mean
+    
+    % COMMENT OUT TO STOP USING THE RUNNING MEAN
     window = 11;
     for a=1:size(xx,2)
         for b=1:size(xx,3)
@@ -49,7 +50,8 @@ for ex = 1:2
                 Xnoise(:,a,b,w) = bsxfun(@minus, xx(:,a,b,w), mean(xx(:,a,b,win),4));
             end
         end
-    end    
+    end   
+    % UNTIL HERE
     
     Xsignal = Xsignal(:,:)';
     Xnoise = Xnoise(:,:)';
@@ -71,6 +73,29 @@ for ex = 1:2
     
     X = {Xsignal, Xnoise};
     Csignal = cov(Xsignal);
+    
+    % UNCOMMENT FOR UNBIASED ESTIMATE OF SIGNAL CORR
+%     Xsignal1 = nanmean(xx,4);
+%     Xsignal2 = nanmean(xx,4);
+%     for a = 1:size(Xsignal1, 2)
+%         for b = 1:size(Xsignal2, 3)
+%             n = sum(~isnan(xx(1,a,b,:)));
+%             Xsignal1(:,a,b) = mean(xx(:,a,b,1:round(n/2)),4);
+%             Xsignal2(:,a,b) = mean(xx(:,a,b,round(n/2)+1:n),4);
+%         end
+%     end
+%     Xsignal1 = Xsignal1(:,:)';
+%     Xsignal2 = Xsignal2(:,:)';
+%     Xsignal1 = Xsignal1(:, v>0);
+%     Xsignal2 = Xsignal2(:, v>0);
+%     Xsignal1 = bsxfun(@minus, Xsignal1, mean(Xsignal1));
+%     Xsignal2 = bsxfun(@minus, Xsignal2, mean(Xsignal2));
+%     if strcmp(covorcorr, 'corr')
+%         Xsignal1 = bsxfun(@times, Xsignal1, 1./(std(Xsignal1)+0.001));
+%         Xsignal2 = bsxfun(@times, Xsignal2, 1./(std(Xsignal2)+0.001));
+%     end    
+%     Csignal = Xsignal1' * Xsignal2 / (36-1);
+    
     Cnoise  = cov(Xnoise);
     C = {Csignal, Cnoise};
         
@@ -125,7 +150,7 @@ for datasetNum = 1:length(l.datasets)
     Xsignal = nanmean(xx,4);
     Xnoise = bsxfun(@minus, xx, Xsignal);
     
-    % subtracting running mean
+    % COMMENT OUT TO STOP USING THE RUNNING MEAN
     window = 11;
     for a=1:size(xx,2)
         for b=1:size(xx,3)
@@ -136,6 +161,7 @@ for datasetNum = 1:length(l.datasets)
             end
         end
     end   
+    % UNTIL HERE
     
     Xsignal = Xsignal(:,:)';
     Xnoise = Xnoise(:,:)';
@@ -155,6 +181,29 @@ for datasetNum = 1:length(l.datasets)
     X = {Xsignal, Xnoise};
     
     Csignal = cov(Xsignal);
+    
+    % UNCOMMENT FOR UNBIASED ESTIMATE OF SIGNAL CORR
+%     Xsignal1 = nanmean(xx,4);
+%     Xsignal2 = nanmean(xx,4);
+%     for a = 1:size(Xsignal1, 2)
+%         for b = 1:size(Xsignal2, 3)
+%             n = sum(~isnan(xx(1,a,b,:)));
+%             Xsignal1(:,a,b) = mean(xx(:,a,b,1:round(n/2)),4);
+%             Xsignal2(:,a,b) = mean(xx(:,a,b,round(n/2)+1:n),4);
+%         end
+%     end
+%     Xsignal1 = Xsignal1(:,:)';
+%     Xsignal2 = Xsignal2(:,:)';
+%     Xsignal1 = Xsignal1(:, v>0);
+%     Xsignal2 = Xsignal2(:, v>0);
+%     Xsignal1 = bsxfun(@minus, Xsignal1, mean(Xsignal1));
+%     Xsignal2 = bsxfun(@minus, Xsignal2, mean(Xsignal2));
+%     if strcmp(covorcorr, 'corr')
+%         Xsignal1 = bsxfun(@times, Xsignal1, 1./(std(Xsignal1)+0.001));
+%         Xsignal2 = bsxfun(@times, Xsignal2, 1./(std(Xsignal2)+0.001));
+%     end    
+%     Csignal = Xsignal1' * Xsignal2 / (36-1);
+    
     Cnoise  = cov(Xnoise);
     C = {Csignal, Cnoise};
     
